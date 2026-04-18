@@ -8,6 +8,10 @@ export class CartService {
   async addTocart(userId: string, dto: AddToCartDto) {
     const { productId, quantity } = dto;
 
+    if (quantity <= 0) {
+      throw new Error('Quantity must be greater than 0');
+    }
+
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
     });
@@ -34,10 +38,16 @@ export class CartService {
     });
 
     if (existingItem) {
+      const newQuantity = existingItem.quantity + quantity;
+
+      if (newQuantity > product.stock) {
+        throw new Error('Not enough stock');
+      }
+
       return this.prisma.cartItem.update({
         where: { id: existingItem.id },
         data: {
-          quantity: existingItem.quantity + quantity,
+          quantity: newQuantity,
         },
       });
     }
