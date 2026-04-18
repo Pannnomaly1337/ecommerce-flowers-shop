@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddToCartDto } from '../cart/dto/add-to-cart-dto';
 
@@ -9,7 +13,7 @@ export class CartService {
     const { productId, quantity } = dto;
 
     if (quantity <= 0) {
-      throw new Error('Quantity must be greater than 0');
+      throw new BadRequestException('Quantity must be greater than 0');
     }
 
     const product = await this.prisma.product.findUnique({
@@ -17,7 +21,7 @@ export class CartService {
     });
 
     if (!product) {
-      throw new Error('Product not found');
+      throw new NotFoundException('Product not found');
     }
 
     let cart = await this.prisma.cart.findFirst({
@@ -41,7 +45,7 @@ export class CartService {
       const newQuantity = existingItem.quantity + quantity;
 
       if (newQuantity > product.stock) {
-        throw new Error('Not enough stock');
+        throw new BadRequestException('Not enough stock');
       }
 
       return this.prisma.cartItem.update({
@@ -53,7 +57,7 @@ export class CartService {
     }
 
     if (quantity > product.stock) {
-      throw new Error('Not enough stock');
+      throw new BadRequestException('Not enough stock');
     }
 
     return this.prisma.cartItem.create({
@@ -93,7 +97,7 @@ export class CartService {
     }
 
     if (quantity <= 0) {
-      throw new Error('Quantity must be greater than 0');
+      throw new BadRequestException('Quantity must be greater than 0');
     }
 
     return this.prisma.cartItem.update({

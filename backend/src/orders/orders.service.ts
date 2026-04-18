@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -19,14 +23,16 @@ export class OrdersService {
       });
 
       if (!cart || cart.items.length === 0) {
-        throw new Error('Cart is empty');
+        throw new BadRequestException('Cart is empty');
       }
 
       let total = 0;
 
       for (const item of cart.items) {
         if (item.product.stock < item.quantity) {
-          throw new Error(`Not enough stock for ${item.product.name}`);
+          throw new BadRequestException(
+            `Not enough stock for ${item.product.name}`,
+          );
         }
 
         total += item.product.price * item.quantity;
@@ -100,7 +106,7 @@ export class OrdersService {
     });
 
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
     return order;
