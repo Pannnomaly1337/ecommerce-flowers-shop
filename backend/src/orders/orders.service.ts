@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { OrderStatus } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
@@ -42,7 +43,7 @@ export class OrdersService {
         data: {
           userId,
           total,
-          status: 'PENDING',
+          status: OrderStatus.PENDING,
           items: {
             create: cart.items.map((item) => ({
               productId: item.productId,
@@ -110,5 +111,64 @@ export class OrdersService {
     }
 
     return order;
+  }
+
+  async updateStatus(orderId: string, status: OrderStatus) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    if (order.status === OrderStatus.CANCELLED) {
+      throw new BadRequestException('Order already cancelled');
+    }
+
+    return this.prisma.order.update({
+      where: { id: orderId },
+      data: { status },
+    });
+  }
+
+  async cancelOrder(userId: string, orderId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const order = await tx.order.findFirst({
+        where: {
+          id: orderId,
+          userId,
+        },
+        include: {
+          items: true,
+        },
+      });
+
+      if (!order) {
+        throw new NotFoundException('Order not found');
+      }
+
+      if (order.status !== OrderStatus.PENDING) {
+        throw new BadRequestException('Cannot cancel this order');
+      }
+
+      for (const item of order.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        });
+      }
+
+      return tx.order.update({
+        where: { id: orderId },
+        data: {
+          status: OrderStatus.CANCELLED,
+        },
+      });
+    });
   }
 }
