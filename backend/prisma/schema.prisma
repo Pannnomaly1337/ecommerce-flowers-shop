@@ -12,6 +12,14 @@ enum Role {
   ADMIN
 }
 
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -61,8 +69,9 @@ model Order {
   user      User        @relation(fields: [userId], references: [id])
   items     OrderItem[]
   total     Float
-  status    String
+  status    OrderStatus @default(PENDING)
   createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now()) @updatedAt
 }
 
 model OrderItem {
