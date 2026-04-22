@@ -9,7 +9,7 @@ import { AddToCartDto } from '../cart/dto/add-to-cart-dto';
 @Injectable()
 export class CartService {
   constructor(private prisma: PrismaService) {}
-  async addTocart(userId: string, dto: AddToCartDto) {
+  async addToCart(userId: string, dto: AddToCartDto) {
     const { productId, quantity } = dto;
 
     if (quantity <= 0) {

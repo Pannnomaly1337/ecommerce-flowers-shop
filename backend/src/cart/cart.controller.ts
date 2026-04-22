@@ -14,22 +14,27 @@ import { JwtPayload } from 'src/auth/types/jwt-payload.type';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CartService } from 'src/cart/cart.service';
 import { AddToCartDto } from './dto/add-to-cart-dto';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from '@prisma/client';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.CUSTOMER)
 @Controller('cart')
 export class CartController {
   constructor(private cartService: CartService) {}
+
+  @Get()
+  getMyCart(@Request() req: ExpressRequest & { user: JwtPayload }) {
+    return this.cartService.getMyCart(req.user.sub);
+  }
+
   @Post()
   addToCart(
     @Request() req: ExpressRequest & { user: JwtPayload },
     @Body() body: AddToCartDto,
   ) {
-    return this.cartService.addTocart(req.user.sub, body);
-  }
-
-  @Get()
-  getMyCart(@Request() req: ExpressRequest & { user: JwtPayload }) {
-    return this.cartService.getMyCart(req.user.sub);
+    return this.cartService.addToCart(req.user.sub, body);
   }
 
   @Patch(':itemId')

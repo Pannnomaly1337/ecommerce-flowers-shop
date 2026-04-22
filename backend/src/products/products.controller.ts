@@ -12,16 +12,13 @@ import { ProductsService } from 'src/products/products.service';
 import { CreateProductDto } from '../products/dto/create-product.dto';
 import { UpdateProductDto } from '../products/dto/update-product.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
-
-  @UseGuards(JwtAuthGuard)
-  @Post()
-  create(@Body() body: CreateProductDto) {
-    return this.productsService.create(body);
-  }
 
   @Get()
   findAll() {
@@ -33,13 +30,22 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Post()
+  create(@Body() body: CreateProductDto) {
+    return this.productsService.create(body);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Patch(':id')
   update(@Param('id') id: string, @Body() body: UpdateProductDto) {
     return this.productsService.update(id, body);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);
