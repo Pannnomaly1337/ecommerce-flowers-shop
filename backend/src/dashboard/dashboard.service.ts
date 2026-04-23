@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { OrderStatus } from '@prisma/client';
 
 @Injectable()
 export class DashboardService {
@@ -7,6 +8,9 @@ export class DashboardService {
 
   async getTotalRevenue() {
     const result = await this.prisma.order.aggregate({
+      where: {
+        status: OrderStatus.DELIVERED,
+      },
       _sum: {
         total: true,
       },
@@ -17,6 +21,9 @@ export class DashboardService {
 
   async getSalesPerDay() {
     const orders = await this.prisma.order.findMany({
+      where: {
+        status: OrderStatus.DELIVERED,
+      },
       select: {
         total: true,
         createdAt: true,
@@ -44,6 +51,11 @@ export class DashboardService {
   async getBestSelling() {
     const items = await this.prisma.orderItem.groupBy({
       by: ['productId'],
+      where: {
+        order: {
+          status: OrderStatus.DELIVERED,
+        },
+      },
       _sum: {
         quantity: true,
       },

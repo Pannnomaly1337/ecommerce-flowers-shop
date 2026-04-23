@@ -122,8 +122,8 @@ export class OrdersService {
       throw new NotFoundException('Order not found');
     }
 
-    if (order.status === OrderStatus.CANCELLED) {
-      throw new BadRequestException('Order already cancelled');
+    if (status === OrderStatus.CANCELLED) {
+      throw new BadRequestException('Use /cancel endpoint instead');
     }
 
     return this.prisma.order.update({
