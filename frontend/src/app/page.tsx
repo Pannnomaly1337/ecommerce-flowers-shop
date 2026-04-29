@@ -29,7 +29,7 @@ export default function Home() {
           <div key={p.id} className="border p-4 rounded">
             <img src={p.imageUrl} className="w-full h-40 object-cover" />
             <h2 className="font-semibold">{p.name}</h2>
-            <p>{p.stock} in stock</p>
+            <p>{p.stock} item(s) in stock</p>
             <p>THB {p.price}</p>
           </div>
         ))}
