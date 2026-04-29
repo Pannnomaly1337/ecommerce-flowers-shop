@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { getProducts } from "../services/product.service";
 import { useRouter } from "next/navigation";
 import { Product } from "../types/product";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   const router = useRouter();
@@ -26,12 +28,14 @@ export default function Home() {
 
       <div className="grid grid-cols-3 gap-4">
         {products.map((p) => (
-          <div key={p.id} className="border p-4 rounded">
-            <img src={p.imageUrl} className="w-full h-40 object-cover" />
-            <h2 className="font-semibold">{p.name}</h2>
-            <p>{p.stock} item(s) in stock</p>
-            <p>THB {p.price}</p>
-          </div>
+          <Link key={p.id} href={`/products/${p.id}`}>
+            <div className="border p-4 rounded cursor-pointer">
+              <Image src={p.imageUrl || "/place-holder.png"} alt={p.name} width={400} height={400} className="object-cover" />
+              <h2 className="font-semibold">{p.name}</h2>
+              <p>{p.stock} item(s) in stock</p>
+              <p>THB {p.price}</p>
+            </div>
+          </Link>
         ))}
       </div>
     </main>
