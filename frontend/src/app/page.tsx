@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getProducts } from "../services/product.service";
 import { useRouter } from "next/navigation";
 import { Product } from "../types/product";
+import { getProducts } from "../services/product.service";
 import Link from "next/link";
 import Image from "next/image";
 
