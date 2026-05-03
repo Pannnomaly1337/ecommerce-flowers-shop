@@ -1,6 +1,7 @@
 "use client";
 
 import { login } from "@/src/services/auth.service";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -40,9 +41,14 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="bg-black text-white p-2" onClick={handleLogin}>
-          Login
-        </button>
+        <div className="w-full flex flex-col justify-between gap-y-4">
+          <button className="bg-black text-white p-2 cursor-pointer" onClick={handleLogin}>
+            Login
+          </button>
+          <Link href="/register" className="bg-black text-white p-2 text-center">
+            Register
+          </Link>
+        </div>
       </div>
     </div>
   );
