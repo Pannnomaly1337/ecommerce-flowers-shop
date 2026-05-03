@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Cart } from "@/src/types/cart";
 import {
   getCart,
@@ -8,8 +9,10 @@ import {
   updateCartItem,
 } from "@/src/services/cart.service";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function CartPage() {
+  const router = useRouter();
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
@@ -69,16 +72,25 @@ export default function CartPage() {
         </div>
       ) : (
         cart?.items.map((item) => (
-          <div key={item.id} className="border p-4 mb-2">
-            <h2>{item.product.name}</h2>
-            <p>Qty: {item.quantity}</p>
-            <p>Price: {item.product.price}</p>
+          <div key={item.id} className="border p-4 mb-2 flex justify-between items-center">
+            <div>
+              <Image
+                                src={item.product.imageUrl || "/place-holder.png"}
+                                alt={item.product.name}
+                                width={50}
+                                height={50}
+                                className="object-cover"
+                              />
+              <h2>{item.product.name}</h2>
+              <p>Qty: {item.quantity}</p>
+              <p>Price: {item.product.price}</p>
+            </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-x-4">
               <button
                 onClick={() => handleUpdate(item.id, item.quantity + 1)}
                 disabled={loadingItemId === item.id}
-                className="bg-black text-white px-4 py-2 mt-4"
+                className="bg-black text-white px-4 py-2 cursor-pointer"
               >
                 +
               </button>
@@ -86,14 +98,14 @@ export default function CartPage() {
               <button
                 onClick={() => handleUpdate(item.id, item.quantity - 1)}
                 disabled={item.quantity <= 1 || loadingItemId === item.id}
-                className="bg-black text-white px-4 py-2 mt-4"
+                className="bg-black text-white px-4 py-2 cursor-pointer"
               >
                 -
               </button>
 
               <button
                 onClick={() => handleRemove(item.id)}
-                className="bg-black text-white px-4 py-2 mt-4"
+                className="bg-red-500 text-white px-4 py-2 cursor-pointer"
               >
                 Remove
               </button>
@@ -102,9 +114,19 @@ export default function CartPage() {
         ))
       )}
 
-      {!loading && cart && cart.items.length > 0 && (
-        <h2 className="mt-6 font-bold">Total: THB {total}</h2>
-      )}
+      <div className="full flex justify-between">
+        <div className="flex justify-end">
+          {!loading && cart && cart.items.length > 0 && (
+            <h2 className="mt-6 font-bold">Total: THB {total}</h2>
+          )}
+        </div>
+        <button
+          onClick={() => router.push("/checkout")}
+          className="bg-black text-white px-4 py-2 mt-4"
+        >
+          Checkout
+        </button>
+      </div>
     </div>
   );
 }

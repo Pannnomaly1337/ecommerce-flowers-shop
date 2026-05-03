@@ -22,7 +22,7 @@ export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
   @Roles(Role.CUSTOMER)
-  @Get()
+  @Get('my')
   getMyOrders(@Request() req: ExpressRequest & { user: JwtPayload }) {
     return this.ordersService.getMyOrders(req.user.sub);
   }
