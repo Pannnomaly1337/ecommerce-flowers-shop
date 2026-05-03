@@ -9,23 +9,52 @@ import Image from "next/image";
 
 export default function Home() {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !!localStorage.getItem("token");
+    }
+    return false;
+  });
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    router.push("/login");
+  };
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
+    if (!isLoggedIn) {
       router.push("/login");
-
       return;
     }
+
     getProducts().then(setProducts);
-  }, []);
+  }, [isLoggedIn, router]);
 
   return (
     <main className="p-10">
-      <h1 className="text-3xl font-bold mb-4">Products</h1>
+      <div className="mb-4 flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Products</h1>
+        <div className="flex gap-x-4">
+          <Link href="/cart" className="bg-black text-white px-4 py-2">
+            My Cart
+          </Link>
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-4 py-2 cursor-pointer"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link href="/login" className="bg-black text-white px-4 py-2">
+              Login
+            </Link>
+          )}
+        </div>
+      </div>
 
       <input
         type="text"

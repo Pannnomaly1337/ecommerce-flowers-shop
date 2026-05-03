@@ -1,6 +1,7 @@
 "use client";
 
 import { register } from "@/src/services/auth.service";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -38,9 +39,17 @@ export default function RegisterPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="bg-black text-white p-2" onClick={handleRegister}>
-          Register
-        </button>
+        <div className="w-full flex flex-col justify-between gap-y-4">
+          <button className="bg-black text-white p-2" onClick={handleRegister}>
+            Register
+          </button>
+          <Link
+            href="/login"
+            className="bg-black text-white p-2 text-center"
+          >
+            Already have an account?
+          </Link>
+        </div>
       </div>
     </div>
   );

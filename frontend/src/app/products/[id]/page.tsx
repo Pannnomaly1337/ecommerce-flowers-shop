@@ -6,6 +6,7 @@ import { Product } from "@/src/types/product";
 import { getProductById } from "@/src/services/product.service";
 import { addToCart } from "@/src/services/cart.service";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ProductDetail() {
   const params = useParams();
@@ -33,23 +34,33 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="p-6">
-      <Image
-        src={product.imageUrl || "/place-holder.png"}
-        width={400}
-        height={400}
-        alt={product.name}
-        className="object-cover"
-      />
-      <h1 className="text-2xl font-bold">{product.name}</h1>
-      <p>{product.description}</p>
-      <p className="text-lg">THB {product.price}</p>
-      <button
-        onClick={() => handleAddToCart(product.id)}
-        className="bg-black text-white px-4 py-2 mt-4"
-      >
-        Add to Cart
-      </button>
-    </div>
+    <main className="p-10">
+      <div className="mb-4 flex justify-between items-center">
+        <Link href="/" className="bg-black text-white px-4 py-2">
+          Back
+        </Link>
+        <Link href="/cart" className="bg-black text-white px-4 py-2">
+          My Cart
+        </Link>
+      </div>
+      <div className="pt-8">
+        <Image
+          src={product.imageUrl || "/place-holder.png"}
+          width={400}
+          height={400}
+          alt={product.name}
+          className="object-cover"
+        />
+        <h1 className="text-2xl font-bold">{product.name}</h1>
+        <p>{product.description}</p>
+        <p className="text-lg">THB {product.price}</p>
+        <button
+          onClick={() => handleAddToCart(product.id)}
+          className="bg-black text-white px-4 py-2 mt-4 cursor-pointer"
+        >
+          Add to Cart
+        </button>
+      </div>
+    </main>
   );
 }

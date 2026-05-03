@@ -7,6 +7,7 @@ import {
   removeCartItem,
   updateCartItem,
 } from "@/src/services/cart.service";
+import Link from "next/link";
 
 export default function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -38,7 +39,7 @@ export default function CartPage() {
     const isConfirmed = confirm("Are you sure you want to remove this item?");
 
     if (!isConfirmed) return;
-    
+
     await removeCartItem(itemId);
     await refreshCart();
   };
@@ -51,7 +52,14 @@ export default function CartPage() {
 
   return (
     <div className="p-10">
-      <h1 className="text-2xl font-bold mb-4">My Cart</h1>
+      <div className="mb-4 flex justify-between items-center">
+        <h1 className="text-3xl font-bold">My Cart</h1>
+        <div>
+          <Link href="/" className="bg-black text-white px-4 py-2">
+            Back
+          </Link>
+        </div>
+      </div>
 
       {loading ? (
         <div>Loading...</div>
