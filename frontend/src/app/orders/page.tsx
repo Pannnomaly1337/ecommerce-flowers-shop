@@ -7,9 +7,13 @@ import Link from "next/link";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getOrders().then(setOrders);
+    getOrders().then((data) => {
+      setOrders(data);
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -23,19 +27,23 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {orders.map((order) => (
-        <div key={order.id} className="border p-4 mb-4">
-          <p>Status: {order.status}</p>
-          <p>Total: {order.total}</p>
+      {loading ? (
+        <div>Loading. . .</div>
+      ) : (
+        orders.map((order) => (
+          <div key={order.id} className="border p-4 mb-4">
+            <p>Status: {order.status}</p>
+            <p>Total: {order.total}</p>
 
-          {order.items.map((item) => (
-            <div key={item.id}>
-              <p>{item.product.name}</p>
-              <p>Qty: {item.quantity}</p>
-            </div>
-          ))}
-        </div>
-      ))}
+            {order.items.map((item) => (
+              <div key={item.id}>
+                <p>{item.product.name}</p>
+                <p>Qty: {item.quantity}</p>
+              </div>
+            ))}
+          </div>
+        ))
+      )}
     </div>
   );
 }
