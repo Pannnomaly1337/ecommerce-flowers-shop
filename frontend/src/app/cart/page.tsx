@@ -15,8 +15,8 @@ export default function CartPage() {
   const router = useRouter();
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
-  const isCartEmpty = loading || !cart || cart.items.length === 0;
   const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
+  const isCartEmpty = loading || !cart || cart.items.length === 0;
 
   useEffect(() => {
     getCart().then((data) => {
