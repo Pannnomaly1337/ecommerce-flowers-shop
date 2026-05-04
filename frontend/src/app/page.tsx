@@ -41,6 +41,7 @@ export default function Home() {
           <Link href="/cart" className="bg-black text-white px-4 py-2">
             My Cart
           </Link>
+          <Link href="/orders" className="bg-black text-white px-4 py-2">Order History</Link>
           {isLoggedIn ? (
             <button
               onClick={handleLogout}

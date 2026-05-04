@@ -15,6 +15,7 @@ export default function CartPage() {
   const router = useRouter();
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
+  const isCartEmpty = loading || !cart || cart.items.length === 0;
   const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -72,15 +73,18 @@ export default function CartPage() {
         </div>
       ) : (
         cart?.items.map((item) => (
-          <div key={item.id} className="border p-4 mb-2 flex justify-between items-center">
+          <div
+            key={item.id}
+            className="border p-4 mb-2 flex justify-between items-center"
+          >
             <div>
               <Image
-                                src={item.product.imageUrl || "/place-holder.png"}
-                                alt={item.product.name}
-                                width={50}
-                                height={50}
-                                className="object-cover"
-                              />
+                src={item.product.imageUrl || "/place-holder.png"}
+                alt={item.product.name}
+                width={50}
+                height={50}
+                className="object-cover"
+              />
               <h2>{item.product.name}</h2>
               <p>Qty: {item.quantity}</p>
               <p>Price: {item.product.price}</p>
@@ -121,8 +125,16 @@ export default function CartPage() {
           )}
         </div>
         <button
-          onClick={() => router.push("/checkout")}
-          className="bg-black text-white px-4 py-2 mt-4"
+          onClick={() => {
+            if (isCartEmpty) return;
+            router.push("/checkout");
+          }}
+          disabled={isCartEmpty}
+          className={`px-4 py-2 mt-4 ${
+            isCartEmpty
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-black text-white cursor-pointer"
+          }`}
         >
           Checkout
         </button>
